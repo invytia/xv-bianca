@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis XV Años - Bianca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Pinyon+Script&family=Montserrat:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta Vino Premium - Elegancia y Contraste */
+            --bg-dark: #1a050a; 
+            --bg-bayou: linear-gradient(135deg, #630c24 0%, #21030b 100%); 
+            --gold-primary: #d4af37; 
+            --gold-secondary: #9c7c2b; 
+            --gold-light: #ebd283;
+            --text-light: #fdfbf7; 
+            --text-muted: #dcaebc; 
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body, html {
+            width: 100%; height: 100%; font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark); color: var(--text-light);
+            overflow-x: hidden; transition: background-color 0.5s ease;
+        }
+
+        /* Pantalla del Sobre */
+        #envelope-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-bayou); z-index: 1000; display: flex; justify-content: center; align-items: center;
+            transition: opacity 1.2s ease-in-out, visibility 1.2s; overflow: hidden;
+        }
+
+        #envelope-screen.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .envelope-wrapper { position: relative; cursor: pointer; transform: scale(0.9); transition: transform 0.5s ease; }
+        .envelope-wrapper:hover { transform: scale(0.95); }
+
+        .envelope {
+            position: relative; width: 340px; height: 240px; background: var(--gold-secondary);
+            border-radius: 0 0 8px 8px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .envelope::before {
+            content: ''; position: absolute; top: 0; right: 0; border-right: 170px solid var(--gold-primary);
+            border-top: 120px solid transparent; border-bottom: 120px solid var(--gold-primary);
+            border-radius: 0 0 8px 0; z-index: 2;
+        }
+
+        .envelope::after {
+            content: ''; position: absolute; top: 0; left: 0; border-left: 170px solid var(--gold-primary);
+            border-top: 120px solid transparent; border-bottom: 120px solid var(--gold-primary);
+            border-radius: 0 0 0 8px; z-index: 2;
+        }
+
+        .front-flap {
+            position: absolute; top: 0; left: 0; border-left: 170px solid transparent; border-right: 170px solid transparent;
+            border-top: 130px solid var(--gold-light); 
+            transform-origin: top; transition: transform 0.6s ease 0.2s; z-index: 4;
+        }
+
+        .envelope-wrapper.open .front-flap { transform: rotateX(180deg); z-index: 1; }
+
+        .wax-seal {
+            position: absolute; top: 110px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px;
+            background: #4a0618; border-radius: 50%; z-index: 5; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+            transition: transform 0.4s ease, opacity 0.4s ease 0.4s; border: 2px solid var(--gold-primary);
+        }
+
+        .wax-seal img { width: 30px; height: 30px; object-fit: contain; filter: brightness(0) invert(1); }
+        .envelope-wrapper.open .wax-seal { transform: translateX(-50%) scale(0); opacity: 0; }
+
+        .envelope-text {
+            position: absolute; bottom: -50px; width: 100%; text-align: center; font-family: 'Cinzel', serif; font-size: 14px;
+            color: var(--text-light); letter-spacing: 3px; text-transform: uppercase; font-weight: 600;
+        }
+
+        .hint-text {
+            position: absolute; bottom: -80px; width: 100%; text-align: center; font-family: 'Montserrat', sans-serif;
+            font-size: 11px; color: var(--text-muted); letter-spacing: 1px; opacity: 0.8; animation: pulse 2s infinite;
+        }
+
+        /* Invitación Principal */
+        #main-invitation {
+            min-height: 100vh; background: url('assets/imagen.jpg') no-repeat center center; background-size: cover;
+            background-attachment: fixed; position: relative; display: flex; flex-direction: column; align-items: center;
+            padding: 60px 20px; opacity: 0; transform: translateY(20px); transition: opacity 1.5s ease-out 0.6s, transform 1.5s ease-out 0.6s;
+        }
+
+        body.content-active #main-invitation { opacity: 1; transform: translateY(0); }
+
+        .invitation-frame {
+            max-width: 500px; width: 100%; border: 1px solid rgba(212, 175, 55, 0.3); padding: 50px 30px; text-align: center;
+            position: relative; background: rgba(30, 4, 12, 0.75); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 4px; overflow: hidden;
+        }
+
+        .lotus-header img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.5)); }
+
+        .section-tag { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 5px; color: var(--gold-primary); text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+        .main-title { font-family: 'Pinyon Script', cursive; font-size: 75px; color: var(--text-light); margin-bottom: 15px; line-height: 1.1; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .phrase { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 19px; color: var(--text-light); line-height: 1.6; margin-bottom: 35px; padding: 0 15px; }
+        .divider { width: 80px; height: 1px; background: linear-gradient(to right, transparent, var(--gold-primary), transparent); margin: 30px auto; }
+
+        .info-block { margin-bottom: 30px; }
+        .info-label { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+        
+        .name-main { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 600; color: var(--gold-primary); letter-spacing: 1px; margin-bottom: 4px; }
+        
+        .info-value-main { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; color: var(--text-light); letter-spacing: 2px; }
+        .info-value-sub { font-family: 'Montserrat', sans-serif; font-size: 13px; color: var(--text-light); margin-top: 5px; letter-spacing: 1px; line-height: 1.5; }
+
+        .countdown-grid { display: flex; justify-content: center; gap: 15px; margin: 25px auto 10px auto; max-width: 350px; position: relative; z-index: 10;}
+        .countdown-item { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); padding: 12px 5px; border-radius: 4px; backdrop-filter: blur(5px); }
+        .countdown-number { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; color: var(--gold-primary); display: block; margin-bottom: 4px;}
+        .countdown-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 600; }
+
+        .map-card { margin-top: 15px; border: 1px solid rgba(212, 175, 55, 0.2); background: rgba(0, 0, 0, 0.2); padding: 20px 15px; border-radius: 4px; text-align: center; }
+        .location-img { width: 100%; height: 180px; object-fit: cover; border-radius: 4px; margin-bottom: 15px; border: 1px solid rgba(212, 175, 55, 0.3); }
+
+        .btn-link {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 25px;
+            background: transparent; color: var(--gold-primary); border: 1px solid var(--gold-primary); font-family: 'Cinzel', serif;
+            font-size: 11px; letter-spacing: 2px; text-decoration: none; text-transform: uppercase; cursor: pointer;
+            transition: all 0.4s ease; font-weight: 600; border-radius: 4px; width: 100%;
+        }
+        .btn-link:hover { background: var(--gold-primary); color: var(--bg-dark); }
+
+        /* Carrusel de Galería */
+        .gallery-wrapper { margin-top: 15px; }
+        .gallery-container {
+            display: flex; overflow-x: auto; gap: 15px; padding: 10px 5px 20px 5px;
+            scroll-snap-type: x mandatory; scrollbar-width: none; 
+        }
+        .gallery-container::-webkit-scrollbar { display: none; } 
+        .gallery-item {
+            flex: 0 0 75%; aspect-ratio: 3/4; border-radius: 4px; overflow: hidden;
+            scroll-snap-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.4); border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.9); }
+
+        .btn-whatsapp {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 30px;
+            background: var(--gold-primary); color: var(--bg-dark); border: 1px solid var(--gold-primary); font-family: 'Cinzel', serif;
+            font-size: 12px; letter-spacing: 3px; text-decoration: none; text-transform: uppercase; cursor: pointer;
+            transition: all 0.4s ease; font-weight: 700; border-radius: 2px; width: 100%; max-width: 320px; margin: 0 auto;
+        }
+        .btn-whatsapp:hover { background: transparent; color: var(--gold-primary); }
+
+        /* Sticky Audio Button */
+        #audio-btn {
+            position: fixed; bottom: 25px; right: 25px; width: 50px; height: 50px;
+            background-color: var(--bg-dark); border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; z-index: 999;
+            opacity: 0; visibility: hidden; transition: all 0.4s ease; border: 1px solid var(--gold-primary);
+        }
+        #audio-btn.visible { opacity: 1; visibility: visible; }
+        #audio-btn svg { width: 20px; height: 20px; fill: var(--gold-primary); }
+        #audio-btn:hover { transform: scale(1.05); background-color: var(--gold-primary); }
+        #audio-btn:hover svg { fill: var(--bg-dark); }
+
+        /* Efecto de luces bokeh elegantes integradas en el fondo */
+        .bokeh-orb { position: absolute; border-radius: 50%; pointer-events: none; animation: float-up infinite ease-in; opacity: 0; z-index: 1; background: radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%); }
+
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.4; } 80% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+        }
+
+        @media (max-width: 400px) {
+            .envelope { width: 290px; height: 210px; }
+            .envelope::before { border-right-width: 145px; border-top-width: 105px; border-bottom-width: 105px; }
+            .envelope::after { border-left-width: 145px; border-top-width: 105px; border-bottom-width: 105px; }
+            .front-flap { border-left-width: 145px; border-right-width: 145px; border-top-width: 115px; }
+            .wax-seal { top: 95px; }
+            .main-title { font-size: 60px; }
+            .invitation-frame { padding: 40px 20px; }
+            .gallery-item { flex: 0 0 85%; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="assets/song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="audio-btn" onclick="toggleAudio()">
+        <svg id="icon-pause" viewBox="0 0 24 24" style="display: block;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <svg id="icon-play" viewBox="0 0 24 24" style="display: none;"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+
+    <div id="envelope-screen">
+        <div class="envelope-wrapper" onclick="openEnvelope()">
+            <div class="front-flap"></div>
+            <div class="wax-seal">
+                <img src="assets/icono.png" alt="Icono Evento">
+            </div>
+            <div class="envelope"></div>
+            <div class="envelope-text">Mis XV Años<br><span id="sobre-nombre" style="color: var(--gold-primary); font-size: 18px; letter-spacing: 5px; font-weight: 600; text-transform: capitalize;">Bianca</span></div>
+            <div class="hint-text">Toca el sello para abrir</div>
+        </div>
+    </div>
+
+    <main id="main-invitation">
+        <div id="lanterns-container" style="position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; z-index:1;"></div>
+
+        <div class="invitation-frame" style="z-index: 2;">
+            <div class="lotus-header">
+                <img src="assets/icono.png" alt="Icono XV Años">
+            </div>
+
+            <div class="section-tag">Mis XV Años</div>
+            <h1 class="main-title" id="main-nombre">Bianca</h1>
+            
+            <p class="phrase">"Hay momentos inolvidables que se atesoran para siempre en el corazón. Me encantaría que me acompañes en este día tan especial."</p>
+
+            <div class="divider"></div>
+
+            <div class="section-tag">Cuenta Atrás</div>
+            <div class="countdown-grid" id="countdown-timer">
+                <div class="countdown-item"><span class="countdown-number" id="days">00</span><span class="countdown-label">Días</span></div>
+                <div class="countdown-item"><span class="countdown-number" id="hours">00</span><span class="countdown-label">Hrs</span></div>
+                <div class="countdown-item"><span class="countdown-number" id="minutes">00</span><span class="countdown-label">Min</span></div>
+                <div class="countdown-item"><span class="countdown-number" id="seconds">00</span><span class="countdown-label">Seg</span></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="info-grid">
+                
+                <div class="info-block">
+                    <div class="info-label">Ceremonia Religiosa</div>
+                    <div class="info-value-main" id="main-fecha">25.JUL.2026</div>
+                    <div class="info-value-sub">Sábado<br>Xalapa, Veracruz</div>
+                    
+                    <div class="map-card">
+                        <img src="assets/ceremonia.jpg" alt="Iglesia" class="location-img">
+                        <a href="#" target="_blank" class="btn-link">Ver Ubicación en Maps</a>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="info-block">
+                    <div class="info-label">Recepción</div>
+                    <div class="info-value-main" id="main-ciudad">Gran Celebración</div>
+                    <div class="info-value-sub">Xalapa, Veracruz</div>
+                    
+                    <div class="map-card">
+                        <img src="assets/recepcion.jpg" alt="Recepción" class="location-img">
+                        <a href="#" target="_blank" class="btn-link">Ver Ubicación en Maps</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-tag">Nuestros Momentos</div>
+            <p class="phrase" style="font-size: 14px; margin-bottom: 10px; opacity: 0.8;">Desliza para ver más</p>
+            <div class="gallery-wrapper">
+                <div class="gallery-container">
+                    <div class="gallery-item"><img src="assets/foto1.jpg" alt="Foto 1"></div>
+                    <div class="gallery-item"><img src="assets/foto2.jpg" alt="Foto 2"></div>
+                    <div class="gallery-item"><img src="assets/foto3.jpg" alt="Foto 3"></div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            
+            <div class="section-tag">Mesa de Regalos</div>
+            <p class="phrase" style="font-size: 16px; margin-bottom: 20px;">Tu presencia es el regalo más hermoso.<br>Si deseas tener un detalle conmigo, puedes hacerlo a través de mi mesa de regalos.</p>
+
+            <div style="margin-bottom: 25px; padding: 0 15px;">
+                <div style="font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--gold-primary); letter-spacing: 2px; margin-bottom: 5px;">LIVERPOOL</div>
+                <div style="font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 15px;">Evento: 00000000</div>
+                <a href="#" target="_blank" class="btn-link" style="width: auto; padding: 12px 35px;">Ver Mesa de Regalos</a>
+            </div>
+
+            <div class="divider"></div>
+            
+            <div class="section-tag">Confirmación</div>
+            <p class="phrase" style="font-size: 18px; margin-bottom: 25px; font-weight: 400;">"Me llenaría de ilusión que nos acompañes."</p>
+            
+            <a href="https://wa.me/525532327877?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20Años%20de%20Bianca." target="_blank" class="btn-whatsapp">Confirmar Asistencia</a>
+            
+            <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; color: var(--text-muted); margin-top: 20px; letter-spacing: 1px; text-transform: uppercase;">Agradecemos tu respuesta antes del evento</div>
+
+            <div class="divider"></div>
+            <div style="font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); margin-top: 20px; font-weight: 600;">INVYTIA PREVIEW DATA</div>
+        </div>
+    </main>
+
+    <script>
+        // Fecha ajustada al evento solicitado
+        let targetDateObj = new Date("July 25, 2026 18:00:00"); 
+        const audio = document.getElementById("bg-music");
+        const audioBtn = document.getElementById("audio-btn");
+        const iconPlay = document.getElementById("icon-play");
+        const iconPause = document.getElementById("icon-pause");
+
+        document.addEventListener("DOMContentLoaded", function() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                
+                if(params.has('nombre')) {
+                    const nombre = params.get('nombre');
+                    document.getElementById('main-nombre').textContent = nombre;
+                    document.getElementById('sobre-nombre').textContent = nombre;
+                }
+
+                if(params.has('ciudad')) {
+                    document.getElementById('main-ciudad').textContent = params.get('ciudad');
+                }
+
+                if(params.has('fecha') && params.get('fecha') !== '') {
+                    const fechaRaw = params.get('fecha'); 
+                    const partes = fechaRaw.split('-');
+                    if(partes.length === 3) {
+                        const year = partes[0];
+                        const monthNum = parseInt(partes[1], 10);
+                        const day = partes[2];
+                        const meses = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+                        document.getElementById('main-fecha').textContent = `${day}.${meses[monthNum - 1]}.${year}`;
+                        targetDateObj = new Date(`${fechaRaw}T18:00:00`); 
+                    }
+                }
+
+                const fotoLocal = sessionStorage.getItem('invytia_foto_preview');
+                if(fotoLocal) {
+                    document.getElementById('main-invitation').style.backgroundImage = `url('${fotoLocal}')`;
+                }
+
+                if(params.has('paleta')) {
+                    const root = document.documentElement;
+                    const p = params.get('paleta');
+                    // Variables de color del configurador aplican aquí.
+                }
+
+            } catch (error) {
+                console.error("Error al procesar la configuración:", error);
+            }
+        });
+
+        function openEnvelope() {
+            document.querySelector('.envelope-wrapper').classList.add('open');
+            setTimeout(() => {
+                document.getElementById('envelope-screen').classList.add('fade-out');
+                document.body.classList.add('content-active');
+                createBokehEffect();
+                
+                // Reproducir audio y mostrar botón
+                audio.play().catch(e => console.log("Auto-play prevenido por el navegador."));
+                audioBtn.classList.add('visible');
+            }, 1200);
+        }
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play();
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+            } else {
+                audio.pause();
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+            }
+        }
+
+        const countdownInterval = setInterval(function() {
+            const timeLeft = targetDateObj.getTime() - new Date().getTime();
+            if (timeLeft < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-timer").innerHTML = "<div style='font-family:\"Cinzel\", serif; color:var(--gold-primary); letter-spacing:2px; font-weight:600;'>¡Llegó el Gran Día!</div>";
+                return;
+            }
+            document.getElementById("days").innerText = Math.floor(timeLeft / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById("hours").innerText = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = Math.floor((timeLeft % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        }, 1000);
+
+        function createBokehEffect() {
+            const container = document.getElementById('lanterns-container');
+            for (let i = 0; i < 20; i++) {
+                const orb = document.createElement('div');
+                orb.classList.add('bokeh-orb');
+                const size = Math.random() * 40 + 20;
+                orb.style.width = `${size}px`; 
+                orb.style.height = `${size}px`;
+                orb.style.left = `${Math.random() * 100}%`; 
+                orb.style.bottom = `-50px`;
+                orb.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                orb.style.animationDelay = `${Math.random() * 8}s`;
+                container.appendChild(orb);
+            }
+        }
+    </script>
+</body>
+</html>
